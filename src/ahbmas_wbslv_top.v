@@ -14,10 +14,10 @@
 //DEFINES
 //TOP MODULE
 
-module AHBMAS_WBSLV_TOP ( 
-  
+module ahbmas_wbslv_top (
+
   hclk,hresetn,
-// AHB Master Interface (Connect to AHB Slave) 
+// AHB Master Interface (Connect to AHB Slave)
   haddr,htrans,hwrite,hsize,
   hburst,hwdata,hrdata,hready,hresp,
 
@@ -29,23 +29,23 @@ module AHBMAS_WBSLV_TOP (
 
 //PARAMETER
 	parameter AWIDTH = 32,DWIDTH = 32;//Address Width,Data Width
-	
-//INPUTS AND OUTPUTS	
+
+//INPUTS AND OUTPUTS
 // --------------------------------------
-//Top level ports for AHB 
-input hresetn;		 //AHB Clk 
+//Top level ports for AHB
+input hresetn;		 //AHB Clk
 input hclk;		 //AHB Active Low Reset
 
 // AHB Master Interface (Connect to AHB Slave)
 input [DWIDTH-1:0]hrdata;		//Read data bus
 
 //Transfer Response	from AHB Slave
-input [1:0]hresp;		
+input [1:0]hresp;
 input hready;
 
 //Address and Control Signals
 output [AWIDTH-1:0]haddr;		//Address
-output hwrite;					//Write/Read Control 
+output hwrite;					//Write/Read Control
 output [2:0]hsize;				//Size of Data Control
 output [2:0]hburst;				//Burst Control
 output [31:0]hwdata;			//Write data bus
@@ -63,16 +63,16 @@ input					cyc_i;    //Wishbone Cycle Input
 input 					stb_i;	   //Wishbone Strobe Input
 input	[3:0]			sel_i;	   //Wishbone Selection Input
 input					we_i;	   //Wishbone Write/Read Control
-input					clk_i;	   //Wishbone Clk Input	
-input					rst_i;	   //Wishbone Active High Reset Input 
+input					clk_i;	   //Wishbone Clk Input
+input					rst_i;	   //Wishbone Active High Reset Input
 
 // datatype declaration
-reg [AWIDTH-1:0]haddr;		
-wire hwrite;			
-reg [2:0]hsize;		
-reg [2:0]hburst;		
-reg [31:0]hwdata;	
-reg [1:0]htrans;		
+reg [AWIDTH-1:0]haddr;
+wire hwrite;
+reg [2:0]hsize;
+reg [2:0]hburst;
+reg [31:0]hwdata;
+reg [1:0]htrans;
 reg	[DWIDTH-1:0]data_o;
 reg	ack_o;
 
@@ -88,7 +88,7 @@ reg	ack_o;
 assign #2 hwrite = we_i;
 
 //Sysncronous Reset
-always @ (posedge clk_i) 
+always @ (posedge clk_i)
 	begin
 	//	hready_temp <= hready;
 		if (rst_i) begin
@@ -97,7 +97,7 @@ always @ (posedge clk_i)
 		//	hready_temp <= 'b1;
 			flag <= 'b1;
 		end
-	
+
 //Write Operation : Wait for a valid Cycle, Strobe and Active High Write enable signal
 		else if (cyc_i & stb_i) begin
 				if (we_i) begin //Write Cycle: No Need To Check for hready signal for data to be send out
@@ -111,9 +111,9 @@ always @ (posedge clk_i)
 						end
 					else begin
 						flag <= #2 'b1;
-						end		
+						end
 				end
-					
+
 			end
 		end
 		//else begin
@@ -128,7 +128,7 @@ always @ (we_i or stb_i or addr_i or flag or hready or hrdata) begin
 			haddr <= addr_i;
 		end
 	end
-	else begin 
+	else begin
 		if (flag) begin
 			haddr <= addr_i;	  //During Flag set Accept Address
 			end
@@ -143,13 +143,13 @@ always @(we_i or addr_i or hrdata or hready or flag )  begin
 	if (rst_i) begin
 		ack_o<='b0;
 		end
-	else if (we_i) 
+	else if (we_i)
 		ack_o <= hready;
 	else
 		ack_o<=!flag & hready;
 	end
 
-//Logic for Transfer Type 
+//Logic for Transfer Type
 always @(cyc_i or stb_i) begin
 	if (rst_i) begin
 		htrans<=2'b00;
@@ -163,9 +163,9 @@ always @(cyc_i or stb_i) begin
 		end
 	end
 	else begin
-	htrans<=2'b00;	//Transfer type Idle 
+	htrans<=2'b00;	//Transfer type Idle
 	end
 end
 
 
-endmodule	
+endmodule
