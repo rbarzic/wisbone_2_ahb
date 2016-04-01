@@ -125,15 +125,15 @@ end
 always @ (we_i or stb_i or addr_i or flag or hready or hrdata) begin
 	if(we_i) begin
 		if (hready) begin
-			haddr <= addr_i;
+			haddr = addr_i;
 		end
 	end
 	else begin
 		if (flag) begin
-			haddr <= addr_i;	  //During Flag set Accept Address
+			haddr = addr_i;	  //During Flag set Accept Address
 			end
 		else begin
-			data_o <= #2 hrdata;	  //During Flag reset Accept Data
+			data_o = #2 hrdata;	  //During Flag reset Accept Data
 			end
 	end
 end
@@ -141,29 +141,29 @@ end
 //Logic for Acknowledge from Wishbone Slave
 always @(we_i or addr_i or hrdata or hready or flag )  begin
 	if (rst_i) begin
-		ack_o<='b0;
+		ack_o='b0;
 		end
 	else if (we_i)
-		ack_o <= hready;
+		ack_o = hready;
 	else
-		ack_o<=!flag & hready;
+		ack_o=!flag & hready;
 	end
 
 //Logic for Transfer Type
 always @(cyc_i or stb_i) begin
 	if (rst_i) begin
-		htrans<=2'b00;
+		htrans=2'b00;
 		end
 	else if (cyc_i) begin
 		if (stb_i) begin
-			htrans <= 2'b10;	//Transfer type Non Sequential
+			htrans = 2'b10;	//Transfer type Non Sequential
 		end
 		else begin
-			htrans <= 2'b01;	//Transfer type Busy
+			htrans = 2'b01;	//Transfer type Busy
 		end
 	end
 	else begin
-	htrans<=2'b00;	//Transfer type Idle
+	htrans=2'b00;	//Transfer type Idle
 	end
 end
 
