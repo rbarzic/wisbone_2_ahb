@@ -12,6 +12,11 @@
 //******************************************************************************************************
 `timescale 1 ns / 1 ns
 //DEFINES
+`ifndef SYNT
+ `define WAHB_DLY #2
+`else
+ `define WAHB_DLY
+`endif
 //TOP MODULE
 
 module ahbmas_wbslv_top (
@@ -85,7 +90,7 @@ reg	ack_o;
 //*******************************************************************
 
 //ASSIGN STATEMENTS
-assign #2 hwrite = we_i;
+assign `WAHB_DLY hwrite = we_i;
 
 //Sysncronous Reset
 always @ (posedge clk_i)
@@ -107,10 +112,10 @@ always @ (posedge clk_i)
 			else begin		//	Read Cycle
 				if (hready) begin
 					if(flag) begin
-						flag <= #2 'b0;
+						flag <= `WAHB_DLY 'b0;
 						end
 					else begin
-						flag <= #2 'b1;
+						flag <= `WAHB_DLY 'b1;
 						end
 				end
 
@@ -133,7 +138,7 @@ always @ (we_i or stb_i or addr_i or flag or hready or hrdata) begin
 			haddr = addr_i;	  //During Flag set Accept Address
 			end
 		else begin
-			data_o = #2 hrdata;	  //During Flag reset Accept Data
+			data_o = `WAHB_DLY hrdata;	  //During Flag reset Accept Data
 			end
 	end
 end
@@ -169,3 +174,6 @@ end
 
 
 endmodule
+`ifndef SYNT
+ `undef WAHB_DLY #2
+`endif
