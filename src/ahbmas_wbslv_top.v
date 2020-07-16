@@ -175,5 +175,5 @@ end
 
 endmodule
 `ifndef SYNT
- `undef WAHB_DLY #2
+ `undef WAHB_DLY
 `endif
